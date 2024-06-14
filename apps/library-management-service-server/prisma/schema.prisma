@@ -1,0 +1,67 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Loan {
+  book       Book?           @relation(fields: [bookId], references: [id])
+  bookId     String?
+  createdAt  DateTime        @default(now())
+  id         String          @id @default(cuid())
+  issueDate  DateTime?
+  member     Member?         @relation(fields: [memberId], references: [id])
+  memberId   String?
+  returnDate DateTime?
+  status     EnumLoanStatus?
+  updatedAt  DateTime        @updatedAt
+}
+
+model Book {
+  author      Author?   @relation(fields: [authorId], references: [id])
+  authorId    String?
+  category    Category? @relation(fields: [categoryId], references: [id])
+  categoryId  String?
+  createdAt   DateTime  @default(now())
+  id          String    @id @default(cuid())
+  isbn        String?
+  loans       Loan[]
+  publishDate DateTime?
+  title       String?
+  updatedAt   DateTime  @updatedAt
+}
+
+model Author {
+  books     Book[]
+  createdAt DateTime @default(now())
+  firstName String?
+  id        String   @id @default(cuid())
+  lastName  String?
+  updatedAt DateTime @updatedAt
+}
+
+model Member {
+  createdAt DateTime @default(now())
+  email     String?
+  firstName String?
+  id        String   @id @default(cuid())
+  lastName  String?
+  loans     Loan[]
+  updatedAt DateTime @updatedAt
+}
+
+model Category {
+  books        Book[]
+  categoryName String?
+  createdAt    DateTime @default(now())
+  description  String?
+  id           String   @id @default(cuid())
+  updatedAt    DateTime @updatedAt
+}
+
+enum EnumLoanStatus {
+  Option1
+}
